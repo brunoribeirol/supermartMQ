@@ -29,9 +29,15 @@ def main():
         print("[2] Fruits")
         print("[3] Cleaning Products")
         print("[4] Exit")
-        sector = int(input("> "))
+
+        try:
+            sector = int(input("> "))
+        except ValueError:
+            print("\n❌ Invalid input. Please enter a number from 1 to 4.")
+            continue
 
         if sector == 4:
+            print("👋 Exiting...")
             break
 
         if sector not in sectors:

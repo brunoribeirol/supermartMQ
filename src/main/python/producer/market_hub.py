@@ -1,73 +1,67 @@
 import pika
 import os
-import sys
-import time
-import random
 from dotenv import load_dotenv
 from datetime import datetime
 
 load_dotenv()
-amqp_url = os.getenv("CLOUDAMQP_URL")
-
-supermarkets = {
-    "1": "MarketHub",
-    "2": "SuperCenter"
-}
-
-products = {
-    "beverages": ["Coke", "Beer", "Juice"],
-    "fruits": ["Apple", "Banana", "Orange"],
-    "cleaning_products": ["Hand Sanitizer", "Window Cleaner", "Bleach"]
-}
-
-def escolher_setores(cod):
-    if cod == "4":
-        return list(products.keys())
-    elif cod == "1":
-        return ["beverages"]
-    elif cod == "2":
-        return ["fruits"]
-    elif cod == "3":
-        return ["cleaning_products"]
-    else:
-        return []
 
 def main():
-    if len(sys.argv) < 3:
-        print("❌ Uso correto: python market_hub.py [market] [sector]")
-        return
 
-    mercado = supermarkets.get(sys.argv[1], "MarketHub")
-    setores = escolher_setores(sys.argv[2])
+    amqp_url = os.getenv("CLOUDAMQP_URL")
 
     params = pika.URLParameters(amqp_url)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()
     channel.exchange_declare(exchange="topic-exchange", exchange_type="topic", durable=False)
 
-    try:
-        print(f"\n🚀 Enviando promoções do {mercado} nos setores: {', '.join(setores)}")
-        while True:
-            setor = random.choice(setores)
-            produto = random.choice(products[setor])
-            desconto = random.randint(5, 35)
-            horario = datetime.now().strftime("%d/%m/%Y - %H:%M")
+    sectors = {
+        1: "beverages",
+        2: "snacks",
+        3: "bakery"
+    }
 
-            mensagem = f"[{horario}] {mercado}: {setor.replace('_', ' ').title()}: {produto} com {desconto}% de desconto!"
-            routing_key = f"marketHub.{setor}"
+    print("🚀 MarketHub Sales")
+    print("--------------------")
 
-            channel.basic_publish(
-                exchange="topic-exchange",
-                routing_key=routing_key,
-                body=mensagem.encode()
-            )
+    while True:
+        print("📦 Choose a sector:")
+        print("[1] Beverages")
+        print("[2] Snacks")
+        print("[3] Bakery")
+        print("[4] Exit")
 
-            print(f"✅ Enviada: {mensagem}")
-            time.sleep(5)
+        try:
+            sector = int(input("> "))
+        except ValueError:
+            print("\n❌ Invalid input. Please enter a number from 1 to 4.")
+            continue
 
-    except KeyboardInterrupt:
-        print("\n⛔ Produtor encerrado.")
-        connection.close()
+        if sector == 4:
+            print("👋 Exiting...")
+            break
+
+        if sector not in sectors:
+            print("\n❌ Invalid sector. Try again!")
+            continue
+
+        print(f"You chose: {sectors[sector].upper()}")
+
+        message = input("✍️ Type the sale: ").strip()
+
+        date_time = datetime.now().strftime("%d/%m/%Y - %H:%M")
+        full_message = f"[{date_time}] MarketHub {sectors[sector].capitalize()} - {message.capitalize()}"
+        routing_key = f"marketHub.{sectors[sector]}"
+
+        channel.basic_publish(
+            exchange="topic-exchange",
+            routing_key=routing_key,
+            body=full_message.encode()
+        )
+
+        print(f"✅ Sent to {sectors[sector].replace('_', ' ').upper()}: {message}\n")
+
+    print("⛔ Producer finished.")
+    connection.close()
 
 if __name__ == "__main__":
     main()

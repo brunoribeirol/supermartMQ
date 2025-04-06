@@ -17,13 +17,9 @@ public class RabbitMQConfig {
     public static final String FRESH_MARKET_MEATFISH_KEY = "freshMarket.meat_fish";
     public static final String FRESH_MARKET_CLEANING_KEY = "freshMarket.cleaning_products";
 
-//    public static final String MARKET_HUB_FRUITS_KEY = "marketHub.fruits";
-//    public static final String MARKET_HUB_MEATFISH_KEY = "marketHub.meat_fish";
-//    public static final String MARKET_HUB_MARKET_CLEANING_KEY = "marketHub.cleaning_products";
-//
-//    public static final String MARKET_HUB_FRESH_MARKET_FRUITS_KEY = "marketHubFreshMarket.fruits";
-//    public static final String MARKET_HUB_FRESH_MARKET_MEATFISH_KEY = "marketHubFreshMarket.meat_fish";
-//    public static final String MARKET_HUB_FRESH_MARKET_CLEANING_KEY = "marketHubFreshMarket.cleaning_products";
+    public static final String MARKET_HUB_BEVERAGES_KEY = "marketHub.beverages";
+    public static final String MARKET_HUB_SNACKS_KEY = "marketHub.snacks";
+    public static final String MARKET_HUB_MARKET_BAKERY = "marketHub.bakery";
 
     @Bean
     public TopicExchange topicExchange() {
@@ -64,6 +60,42 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(freshMarketCleaningQueue)
                 .to(topicExchange)
                 .with(FRESH_MARKET_CLEANING_KEY);
+    }
+
+    @Bean
+    public Queue marketHubBeveragesQueue() {
+        return new Queue("marketHub.beverages.queue");
+    }
+
+    @Bean
+    public Binding bindingBeverages(TopicExchange topicExchange, Queue marketHubBeveragesQueue) {
+        return BindingBuilder.bind(marketHubBeveragesQueue)
+                .to(topicExchange)
+                .with(MARKET_HUB_BEVERAGES_KEY);
+    }
+
+    @Bean
+    public Queue marketHubSnacksQueue() {
+        return new Queue("marketHub.snacks.queue");
+    }
+
+    @Bean
+    public Binding bindingSnacks(TopicExchange topicExchange, Queue marketHubSnacksQueue) {
+        return BindingBuilder.bind(marketHubSnacksQueue)
+                .to(topicExchange)
+                .with(MARKET_HUB_SNACKS_KEY);
+    }
+
+    @Bean
+    public Queue marketHubBakeryQueue() {
+        return new Queue("marketHub.bakery.queue");
+    }
+
+    @Bean
+    public Binding bindingBakery(TopicExchange topicExchange, Queue marketHubBakeryQueue) {
+        return BindingBuilder.bind(marketHubBakeryQueue)
+                .to(topicExchange)
+                .with(MARKET_HUB_MARKET_BAKERY);
     }
 
     @Bean

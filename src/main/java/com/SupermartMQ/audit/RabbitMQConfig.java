@@ -5,12 +5,13 @@ import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class RabbitMQConfig {
 
     public static final String TOPIC_EXCHANGE = "topic-exchange";
 
-    //Fila de auditoria
     @Bean
     public Queue auditQueue() {
         return new Queue("audit.queue");
@@ -18,7 +19,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Binding auditBinding(Queue auditQueue, TopicExchange topicExchange) {
-        return BindingBuilder.bind(auditQueue).to(topicExchange).with("#"); // Escuta tudo
+        return BindingBuilder.bind(auditQueue).to(topicExchange).with("#");
     }
 
     @Bean
