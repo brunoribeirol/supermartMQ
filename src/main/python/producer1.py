@@ -1,83 +1,73 @@
 import pika
 import os
+import sys
+import time
+import random
 from dotenv import load_dotenv
+from datetime import datetime
 
+load_dotenv()
+amqp_url = os.getenv("CLOUDAMQP_URL")
+
+supermarkets = {
+    "1": "MarketHub",
+    "2": "SuperCenter"
+}
+
+products = {
+    "beverages": ["Coke", "Beer", "Juice"],
+    "fruits": ["Apple", "Banana", "Orange"],
+    "cleaning_products": ["Hand Sanitizer", "Window Cleaner", "Bleach"]
+}
+
+def escolher_setores(cod):
+    if cod == "4":
+        return list(products.keys())
+    elif cod == "1":
+        return ["beverages"]
+    elif cod == "2":
+        return ["fruits"]
+    elif cod == "3":
+        return ["cleaning_products"]
+    else:
+        return []
 
 def main():
-    load_dotenv()
-    amqp_url = os.getenv("CLOUDAMQP_URL")
+    if len(sys.argv) < 3:
+        print("❌ Uso correto: python producer1.py [market] [sector]")
+        return
 
-    routing_keys = {
-        "1": "beverages",
-        "2": "fruits",
-        "3": "cleaning_products"
-    }
+    mercado = supermarkets.get(sys.argv[1], "MarketHub")
+    setores = escolher_setores(sys.argv[2])
 
-    sectors = {
-        "1": "beverages",
-        "2": "fruits",
-        "3": "cleaning products"
-    }
-
-    products = {
-        "beverages": ["Coke", "Beer"],
-        "fruits": ["Apple", "Banana"],
-        "cleaning products": ["Hand Sanitizer", "Window Cleaner"]
-    }
-
-    discounts = {
-        "coke": 10,
-        "beer": 5,
-        "apple": 15,
-        "banana": 7,
-        "hand sanitizer": 20,
-        "window cleaner": 25
-    }
-
+    params = pika.URLParameters(amqp_url)
+    connection = pika.BlockingConnection(params)
+    channel = connection.channel()
+    channel.exchange_declare(exchange="topic-exchange", exchange_type="topic", durable=False)
 
     try:
-        params = pika.URLParameters(amqp_url)
-        connection = pika.BlockingConnection(params)
-        channel = connection.channel()
-        channel.exchange_declare(exchange="topic-exchange", exchange_type="topic")
-
+        print(f"\n🚀 Enviando promoções do {mercado} nos setores: {', '.join(setores)}")
         while True:
-            print("\n----------Welcome to the MarketHub----------")
-            print("\n")
+            setor = random.choice(setores)
+            produto = random.choice(products[setor])
+            desconto = random.randint(5, 35)
+            horario = datetime.now().strftime("%d/%m/%Y - %H:%M")
 
-            sector = input("""Which sector do you wanna see the discounts?
-            [1] - Beverages
-            [2] - Fruits
-            [3] - Cleaning Products
-            """)
+            mensagem = f"[{horario}] {mercado}: {setor.replace('_', ' ').title()}: {produto} com {desconto}% de desconto!"
+            routing_key = f"marketHub.{setor}"
 
-            if sector not in sectors:
-                print("Invalid option. Try again!")
-                sector = input("""Which sector do you wanna see the discounts?
-                [1] - Beverages
-                [2] - Fruits
-                [3] Cleaning Products
-                """)
+            channel.basic_publish(
+                exchange="topic-exchange",
+                routing_key=routing_key,
+                body=mensagem.encode()
+            )
 
-            sector_name = sectors.get(sector)
-            product_list = products.get(sector_name)
+            print(f"✅ Enviada: {mensagem}")
+            time.sleep(5)
 
-            print(f"Products {product_list}")
-
-            product = input("Which product do you wanna see the discount? ").strip().lower()
-
-            if product not in [p.lower() for p in products[sector_name]]:
-                print("Invalid option. Try again!")
-
-            print(f"{product.capitalize()} has {discounts[product]}% discount")
-
-
-
-
-
-    except Exception as e:
-        print(f"Error: {e}")
-
+    except KeyboardInterrupt:
+        print("\n⛔ Produtor encerrado.")
+        connection.close()
 
 if __name__ == "__main__":
     main()

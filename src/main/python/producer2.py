@@ -1,82 +1,57 @@
 import pika
 import os
 from dotenv import load_dotenv
-
+from datetime import datetime
 
 def main():
     load_dotenv()
     amqp_url = os.getenv("CLOUDAMQP_URL")
 
-    routing_keys = {
+    params = pika.URLParameters(amqp_url)
+    connection = pika.BlockingConnection(params)
+    channel = connection.channel()
+    channel.exchange_declare(exchange="topic-exchange", exchange_type="topic", durable=False)
+
+    sectors = {
         "1": "meat_fish",
         "2": "fruits",
         "3": "cleaning_products"
     }
 
-    sectors = {
-        "1": "meat_fish",
-        "2": "fruits",
-        "3": "cleaning products"
-    }
+    print("🚀 FreshMarket Sales")
 
-    products = {
-        "meat_fish": ["Sirloin", "Tuna"],
-        "fruits": ["Grape", "Strawberry"],
-        "cleaning products": ["Hand Sanitizer", "Window Cleaner"]
-    }
+    while True:
+        print("📦 Escolha o setor:")
+        print("[1] Meat & Fish")
+        print("[2] Fruits")
+        print("[3] Cleaning Products")
+        sector = input("> ").strip()
 
-    discounts = {
-        "sirloin": 20,
-        "tuna": 18,
-        "grape": 11,
-        "strawberry": 6,
-        "hand sanitizer": 25,
-        "window cleaner": 15
-    }
+        if sector.lower() == "exit":
+            break
 
+        if sector not in sectors:
+            print("❌ Invalid sector. Try again!")
+            continue
 
-    try:
-        params = pika.URLParameters(amqp_url)
-        connection = pika.BlockingConnection(params)
-        channel = connection.channel()
-        channel.exchange_declare(exchange="topic-exchange", exchange_type="topic")
+        message = input("✍️ Type the sale: ").strip()
+        if message.lower() == "exit":
+            break
 
-        while True:
-            print("\n----------Welcome to the FreshMarket----------")
-            print("\n")
+        data_hora = datetime.now().strftime("%d/%m/%Y - %H:%M")
+        full_message = f"[{data_hora}] FreshMarket {sectors[sector]}. - {message}"
+        routing_key = f"freshMarket.{sectors[sector]}"
 
-            sector = input("""Which sector do you wanna see the discounts?
-            [1] - Meat and Fish
-            [2] - Fruits
-            [3] - Cleaning Products
-            """)
+        channel.basic_publish(
+            exchange="topic-exchange",
+            routing_key=routing_key,
+            body=full_message.encode()
+        )
 
-            if sector not in sectors:
-                print("Invalid option. Try again!")
-                sector = input("""Which sector do you wanna see the discounts?
-                [1] - Meat and Fish
-                [2] - Fruits
-                [3] Cleaning Products
-                """)
+        print(f"✅ Sent to {sectors[sector].replace('_', ' ').title()}: {message}\n")
 
-            sector_name = sectors.get(sector)
-            product_list = products.get(sector_name)
-
-            print(f"Products {product_list}")
-
-            product = input("Which product do you wanna see the discount? ").strip().lower()
-
-            if product not in [p.lower() for p in products[sector_name]]:
-                print("Invalid option. Try again!")
-                print(f"Products {product_list}")
-                product = input("Which product do you wanna see the discount? ").strip().lower()
-
-            print(f"{product.capitalize()} has {discounts[product]}% discount")
-
-
-    except Exception as e:
-        print(f"Error: {e}")
-
+    print("⛔ Producer finished.")
+    connection.close()
 
 if __name__ == "__main__":
     main()

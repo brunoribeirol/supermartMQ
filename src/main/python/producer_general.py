@@ -61,12 +61,7 @@ def main():
 
             if sector not in sectors:
                 print("Invalid option. Try again!")
-                sector = input("""Which sector do you wanna see the discounts?
-                [1] - Beverages
-                [2] - Fruits
-                [3] - Cleaning Products
-                [4] - Meat and Fish
-                """)
+                continue
 
             sector_name = sectors.get(sector)
             product_list = products.get(sector_name)
