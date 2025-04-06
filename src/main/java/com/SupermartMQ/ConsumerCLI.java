@@ -1,3 +1,60 @@
+//package com.SupermartMQ;
+//
+//import java.util.Scanner;
+//
+//import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+//import org.springframework.boot.CommandLineRunner;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.context.ApplicationContext;
+//
+//@Configuration
+//public class ConsumerCLI {
+//
+//    @Bean
+//    CommandLineRunner runner(SimpleMessageListenerContainer container, ApplicationContext context) {
+//        return args -> {
+//            Scanner scanner = new Scanner(System.in);
+//            String selectedSector = "";
+//            String queueName = "";
+//
+//            System.out.println("📦 Escolha o setor que deseja receber promoções:");
+//            System.out.println("[1] - Meat & Fish");
+//            System.out.println("[2] - Fruits");
+//            System.out.println("[3] - Cleaning Products");
+//            System.out.print("Digite sua opção (1-3): ");
+//            String sectorChoice = scanner.nextLine().trim();
+//
+//            switch (sectorChoice) {
+//                case "1":
+//                    selectedSector = "Meat & Fish";
+//                    queueName = "freshMarket.meat_fish.queue";
+//                    break;
+//                case "2":
+//                    selectedSector = "Fruits";
+//                    queueName = "freshMarket.fruits.queue";
+//                    break;
+//                case "3":
+//                    selectedSector = "Cleaning Products";
+//                    queueName = "freshMarket.cleaning_products.queue";
+//                    break;
+//                default:
+//                    System.out.println("❌ Opção inválida. Saindo.");
+//                    return;
+//            }
+//
+//            // Escutar somente a fila selecionada
+//            container.setQueueNames(queueName);
+//            container.start();
+//
+//            System.out.println("\n✅ Setor selecionado: " + selectedSector);
+//            System.out.println("🎧 Escutando a fila: " + queueName);
+//            System.out.println("Aguardando mensagens...\n");
+//        };
+//    }
+//}
+
+
 package com.SupermartMQ;
 
 import java.util.Scanner;
@@ -25,7 +82,7 @@ public class ConsumerCLI {
                              ApplicationContext context) { //adicionei
         return args -> {
             Scanner scanner = new Scanner(System.in);
-//            Queue selectedQueue;
+            Queue selectedQueue;
             String selectedSupermarket = "";
             String selectedSector = "";
             String routingKey = "";
@@ -40,17 +97,17 @@ public class ConsumerCLI {
 
                 switch (supermarketChoice) {
                     case "1":
-//                        selectedQueue = marketHubQueue;
+                        selectedQueue = marketHubQueue;
                         selectedSupermarket = "MarketHub";
                         routingKey = "marketHub";
                         break;
                     case "2":
-//                        selectedQueue = freshMarketQueue;
+                        selectedQueue = freshMarketQueue;
                         selectedSupermarket = "FreshMarket";
                         routingKey = "freshMarket";
                         break;
                     case "3":
-//                        selectedQueue = marketHubFreshMarketQueue;
+                        selectedQueue = marketHubFreshMarketQueue;
                         selectedSupermarket = "MarketHub & FreshMarket";
                         routingKey = "marketHubFreshMarket";
                         break;
@@ -86,7 +143,6 @@ public class ConsumerCLI {
 
                 // ✅ Corrigido: criar fila com base apenas na routingKey
                 String queueName = "queue." + routingKey.replace(".", "_");
-
 
                 // Declarar fila e binding dinamicamente
                 AmqpAdmin admin = context.getBean(AmqpAdmin.class);

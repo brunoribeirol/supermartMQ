@@ -34,7 +34,7 @@ def escolher_setores(cod):
 
 def main():
     if len(sys.argv) < 3:
-        print("❌ Uso correto: python producer1.py [market] [sector]")
+        print("❌ Uso correto: python market_hub.py [market] [sector]")
         return
 
     mercado = supermarkets.get(sys.argv[1], "MarketHub")
