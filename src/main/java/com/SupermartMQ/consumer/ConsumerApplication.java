@@ -1,5 +1,4 @@
-// ConsumerApplication.java
-package com.SupermartMQ;
+package com.SupermartMQ.consumer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

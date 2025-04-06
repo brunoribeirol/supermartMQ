@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 from datetime import datetime
 
 load_dotenv()
-# EXCHANGE_NAME = "supermarket_exchange"
-# EXCHANGE_TYPE = "topic"
 
 def main():
 
