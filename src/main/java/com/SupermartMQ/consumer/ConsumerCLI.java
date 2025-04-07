@@ -1,21 +1,28 @@
 package com.SupermartMQ.consumer;
 
 import java.util.Scanner;
+import java.util.UUID;
+
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.ApplicationContext;
 
 @Configuration
 public class ConsumerCLI {
 
     @Bean
-    CommandLineRunner runner(SimpleMessageListenerContainer container) {
+    CommandLineRunner runner(SimpleMessageListenerContainer container, ApplicationContext context) {
         return args -> {
             Scanner scanner = new Scanner(System.in);
             String selectedSupermarket = "";
             String selectedSector = "";
-            String queueName = "";
+            String routingKey = "";
 
             while (true) {
                 System.out.println("\n🛒 Choose your supermarket:");
@@ -45,25 +52,26 @@ public class ConsumerCLI {
                     String hubChoice = scanner.nextLine().trim();
 
                     switch (hubChoice) {
-                        case "1":
+                        case "1" -> {
                             selectedSector = "Beverages";
-                            queueName = "marketHub.beverages.queue";
-                            break;
-                        case "2":
+                            routingKey = "marketHub.beverages";
+                        }
+                        case "2" -> {
                             selectedSector = "Snacks";
-                            queueName = "marketHub.snacks.queue";
-                            break;
-                        case "3":
+                            routingKey = "marketHub.snacks";
+                        }
+                        case "3" -> {
                             selectedSector = "Bakery";
-                            queueName = "marketHub.bakery.queue";
-                            break;
-                        default:
+                            routingKey = "marketHub.bakery";
+                        }
+                        default -> {
                             System.out.println("❌ Invalid sector. Try again.");
                             continue;
+                        }
                     }
                     break;
                 }
-            } else if (selectedSupermarket.equals("FreshMarket")) {
+            } else {
                 while (true) {
                     System.out.println("\n📦 Choose a FreshMarket sector:");
                     System.out.println("[1] Meat & Fish");
@@ -73,34 +81,44 @@ public class ConsumerCLI {
                     String freshChoice = scanner.nextLine().trim();
 
                     switch (freshChoice) {
-                        case "1":
+                        case "1" -> {
                             selectedSector = "Meat & Fish";
-                            queueName = "freshMarket.meat_fish.queue";
-                            break;
-                        case "2":
+                            routingKey = "freshMarket.meat_fish";
+                        }
+                        case "2" -> {
                             selectedSector = "Fruits";
-                            queueName = "freshMarket.fruits.queue";
-                            break;
-                        case "3":
+                            routingKey = "freshMarket.fruits";
+                        }
+                        case "3" -> {
                             selectedSector = "Cleaning Products";
-                            queueName = "freshMarket.cleaning_products.queue";
-                            break;
-                        default:
+                            routingKey = "freshMarket.cleaning_products";
+                        }
+                        default -> {
                             System.out.println("❌ Invalid sector. Try again.");
                             continue;
+                        }
                     }
                     break;
                 }
             }
 
+            String uniqueQueue = routingKey + ".client_" + UUID.randomUUID();
+
+            Queue queue = new Queue(uniqueQueue, false, false, true);
+            AmqpAdmin admin = context.getBean(AmqpAdmin.class);
+            TopicExchange exchange = context.getBean(TopicExchange.class);
+
+            admin.declareQueue(queue);
+            admin.declareBinding(BindingBuilder.bind(queue).to(exchange).with(routingKey));
+
             container.stop();
-            container.setQueueNames(queueName);
+            container.setQueueNames(uniqueQueue);
             container.start();
 
             System.out.println("\n✅ You selected:");
             System.out.println("Supermarket: " + selectedSupermarket);
             System.out.println("Sector: " + selectedSector);
-            System.out.println("🎧 Listening to: " + queueName);
+            System.out.println("🎧 Listening on queue: " + uniqueQueue);
             System.out.println("⏳ Waiting for messages...\n");
         };
     }

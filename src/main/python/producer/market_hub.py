@@ -12,7 +12,7 @@ def main():
     params = pika.URLParameters(amqp_url)
     connection = pika.BlockingConnection(params)
     channel = connection.channel()
-    channel.exchange_declare(exchange="topic-exchange", exchange_type="topic", durable=False)
+    channel.exchange_declare(exchange="topic-exchange", exchange_type="topic", durable=False, auto_delete=True)
 
     sectors = {
         1: "beverages",
