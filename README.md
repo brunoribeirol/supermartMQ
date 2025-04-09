@@ -73,9 +73,9 @@ CLOUDAMQP_URL=amqps://<username>:<password>@<host>/<vhost>
 #### ▶️ Run the producers
 
 ```bash
-python3 market_hub.py
+python3 src/main/python/market_hub.py
 # or
-python3 fresh_market.py
+python3 src/main/python/market_hub.py
 ```
 
 ---
@@ -97,7 +97,7 @@ Receives **all messages** across all routing keys for audit purposes.
 **Run it**:
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=audit"
+./mvnw spring-boot:run -Dspring-boot.run.main-class=com.SupermartMQ.audit.AuditApplication
 ```
 
 ---
@@ -107,6 +107,7 @@ mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=audit"
 Interactive consumer that lets users choose which **supermarket** and **sector** to subscribe to.
 
 **Files**:
+- `ConsumerApplication.java`
 - `ConsumerCLI.java`
 - `ConsumerReceiver.java`
 - `RabbitMQConfig.java` (Consumer version)
@@ -119,7 +120,7 @@ Interactive consumer that lets users choose which **supermarket** and **sector**
 **Run it**:
 
 ```bash
-mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=consumer"
+./mvnw spring-boot:run -Dspring-boot.run.main-class=com.SupermartMQ.consumer.ConsumerApplication
 ```
 
 ---
