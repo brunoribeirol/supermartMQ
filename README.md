@@ -75,7 +75,7 @@ CLOUDAMQP_URL=amqps://<username>:<password>@<host>/<vhost>
 ```bash
 python3 src/main/python/market_hub.py
 # or
-python3 src/main/python/market_hub.py
+python3 src/main/python/fresh_market.py
 ```
 
 ---
