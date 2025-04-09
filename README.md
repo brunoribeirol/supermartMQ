@@ -148,25 +148,9 @@ pip install pika python-dotenv
 
 ---
 
-## 📌 Future Improvements
-
-- Add message persistence or log to a database.
-- Implement message acknowledgments and retry logic.
-- Dockerize all components.
-- Add unit and integration tests with CI pipeline.
-
----
-
-## ✨ Contributors
-
-**Bruno Ribeiro Lima Lins de Araujo** — Developer & Architect
-
----
-
 ## 📃 License
 
-[MIT License](LICENSE) — Feel free to use and modify!
+[Apache License 2.0](LICENSE) — Feel free to use and modify!
+
 
 ---
-
-> Let me know if you’d like to add badges, architecture diagrams, or even translate this README to Portuguese 🇧🇷!
