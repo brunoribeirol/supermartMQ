@@ -73,9 +73,9 @@ CLOUDAMQP_URL=amqps://<username>:<password>@<host>/<vhost>
 #### ▶️ Run the producers
 
 ```bash
-python3 src/main/python/market_hub.py
+python3 src/main/python/producer/market_hub.py
 # or
-python3 src/main/python/fresh_market.py
+python3 src/main/python/producer/fresh_market.py
 ```
 
 ---
@@ -125,6 +125,51 @@ Interactive consumer that lets users choose which **supermarket** and **sector**
 
 ---
 
+## 🧭 Unified Execution Menu (Optional)
+
+If you prefer to run everything from a single interactive terminal interface, you can use the included `menu.py` script. This CLI allows you to:
+
+1. Launch the **Audit Backend**
+2. Launch the **Java Consumer CLI**
+3. Launch a **Python Producer** (you’ll be prompted to select either MarketHub or FreshMarket)
+
+#### ✅ How to Use
+
+1. Make the script executable (once):
+
+```bash
+chmod +x menu.py
+```
+
+2. Run the menu:
+
+```bash
+./menu.py
+```
+
+3. Example terminal interaction:
+
+```
+=== SupermartMQ Menu ===
+1. Start Audit Backend
+2. Start Java Consumer
+3. Start Python Producer
+4. Exit
+
+Choose an option (1-4):
+```
+
+After choosing option `3`, you’ll be asked:
+
+```
+Which Python producer do you want to run?
+1. MarketHub
+2. FreshMarket
+Enter your choice (1-2):
+```
+
+---
+
 ## 🔗 CloudAMQP Setup
 
 1. Create a free account at [CloudAMQP](https://www.cloudamqp.com).
@@ -148,12 +193,12 @@ pip install pika python-dotenv
 - Java 17+
 - Spring Boot Dependencies:
   - `spring-boot-starter-amqp`
-  - `spring-boot-starter`
+  - `spring-boot-starter-test` - for testing
+  - `spring-rabbit-test` - (for RabbitMQ test support)
+  - `spring-dotenv` - (me.paulschwarz:spring-dotenv:3.0.0, for loading .env files)
 
 ---
 
 ## 📃 License
 
 [Apache License 2.0](LICENSE) — Feel free to use and modify!
-
----
