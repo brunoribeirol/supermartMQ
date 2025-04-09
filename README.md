@@ -9,11 +9,12 @@ Producers are written in **Python** and publish messages to **CloudAMQP**, while
 
 ```
 supermartmq/
+├── menu.py                        # Interactive CLI menu to launch producers, consumers, and audit services
 └── src/
     └── main/
         ├── python/
-        │   ├── market_hub.py        # Producer for MarketHub sectors
-        │   └── fresh_market.py      # Producer for FreshMarket sectors
+        │   ├── market_hub.py      # Producer for MarketHub sectors
+        │   └── fresh_market.py    # Producer for FreshMarket sectors
         └── java/
             └── com/
                 ├── audit/
