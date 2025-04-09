@@ -9,18 +9,21 @@ Producers are written in **Python** and publish messages to **CloudAMQP**, while
 
 ```
 supermartmq/
-├── python/
-│   ├── market_hub.py        # Producer for MarketHub sectors
-│   └── fresh_market.py      # Producer for FreshMarket sectors
-└── java/
-    ├── audit/
-    │   ├── AuditApplication.java
-    │   ├── AuditReceiver.java
-    │   └── RabbitMQConfig.java  # Audit-specific config
-    └── consumer/
-        ├── ConsumerCLI.java
-        ├── ConsumerReceiver.java
-        └── RabbitMQConfig.java  # Consumer-specific config
+└── src/
+    └── main/
+        ├── python/
+        │   ├── market_hub.py        # Producer for MarketHub sectors
+        │   └── fresh_market.py      # Producer for FreshMarket sectors
+        └── java/
+            └── com/
+                ├── audit/
+                │   ├── AuditApplication.java
+                │   ├── AuditReceiver.java
+                │   └── RabbitMQConfig.java  # Audit-specific config
+                └── consumer/
+                    ├── ConsumerCLI.java
+                    ├── ConsumerReceiver.java
+                    └── RabbitMQConfig.java  # Consumer-specific config
 ```
 
 ---
@@ -94,7 +97,7 @@ Receives **all messages** across all routing keys for audit purposes.
 **Run it**:
 
 ```bash
-./gradlew bootRun --args='--spring.profiles.active=audit'
+mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=audit"
 ```
 
 ---
@@ -116,7 +119,7 @@ Interactive consumer that lets users choose which **supermarket** and **sector**
 **Run it**:
 
 ```bash
-./gradlew bootRun --args='--spring.profiles.active=consumer'
+mvn spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=consumer"
 ```
 
 ---
@@ -151,6 +154,5 @@ pip install pika python-dotenv
 ## 📃 License
 
 [Apache License 2.0](LICENSE) — Feel free to use and modify!
-
 
 ---
