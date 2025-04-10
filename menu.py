@@ -30,8 +30,8 @@ def start_producer(script_name):
 def producer_menu():
     while True:
         print("\n=== Select a Producer (Python) ===")
-        print("1. Market Hub Producer")
-        print("2. Fresh Market Producer")
+        print("1. Market Hub")
+        print("2. Fresh Market")
         print("3. Back to Main Menu")
 
         choice = input("Choose an option (1-3): ")

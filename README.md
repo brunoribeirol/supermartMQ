@@ -152,9 +152,9 @@ chmod +x menu.py
 
 ```
 === SupermartMQ Menu ===
-1. Start Audit Backend
-2. Start Java Consumer
-3. Start Python Producer
+1. Start Audit (Java)
+2. Start Consumer (Java)
+3. Start Producer (Python)
 4. Exit
 
 Choose an option (1-4):
