@@ -29,7 +29,7 @@ def start_producer(script_name):
 
 def producer_menu():
     while True:
-        print("\n=== Select a Producer (Python) ===")
+        print("\n=== Select a Producer ===")
         print("1. Market Hub")
         print("2. Fresh Market")
         print("3. Back to Main Menu")
@@ -48,7 +48,7 @@ def producer_menu():
 
 def main_menu():
     while True:
-        print("\n=== SupermartMQ System ===")
+        print("\n=== SupermartMQ ===")
         print("1. Start Audit (Java)")
         print("2. Start Consumer (Java)")
         print("3. Start Producer (Python)")

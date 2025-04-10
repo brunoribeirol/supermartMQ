@@ -151,22 +151,22 @@ chmod +x menu.py
 3. Example terminal interaction:
 
 ```
-=== SupermartMQ Menu ===
+=== SupermartMQ ===
 1. Start Audit (Java)
 2. Start Consumer (Java)
 3. Start Producer (Python)
 4. Exit
-
 Choose an option (1-4):
 ```
 
 After choosing option `3`, you’ll be asked:
 
 ```
-Which Python producer do you want to run?
-1. MarketHub
-2. FreshMarket
-Enter your choice (1-2):
+ === Select a Producer ===
+1. Market Hub
+2. Fresh Market
+3. Back to Main Menu
+Enter your choice (1-3):
 ```
 
 ---
